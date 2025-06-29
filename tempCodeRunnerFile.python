@@ -1,0 +1,37 @@
+import numpy as np
+
+class Perceptron:
+    def __init__(self, input_size, learning_rate=1):
+        self.weights = np.zeros(input_size + 1)  # Initialize weights (including bias) to zeros
+        self.learning_rate = learning_rate
+
+    def predict(self, inputs):
+        """Predict the output using the current weights."""
+        summation = np.dot(inputs, self.weights[1:]) + self.weights[0]  # Weighted sum + bias
+        return 1 if summation >= 0 else 0
+
+    def train(self, training_data, labels):
+        """Train the perceptron using the fixed increment learning algorithm."""
+        no_change = False
+        while not no_change:
+            no_change = True
+            for inputs, label in zip(training_data, labels):
+                prediction = self.predict(inputs)
+                error = label - prediction
+                if error != 0:
+                    no_change = False
+                    # Update weights and bias
+                    self.weights[1:] += self.learning_rate * error * inputs
+                    self.weights[0] += self.learning_rate * error
+
+# Example dataset (AND logic gate)
+# Inputs: [[0, 0], [0, 1], [1, 0], [1, 1]]
+# Labels: [0, 0, 0, 1]
+if __name__ == "__main__":
+    training_inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+    labels = np.array([0, 0, 0, 1])  # AND gate
+
+    perceptron = Perceptron(input_size=2, learning_rate=1)
+    perceptron.train(training_inputs, labels)
+
+    print("Final weights:", perceptron.weights)

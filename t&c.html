@@ -1,0 +1,107 @@
+<body>
+    <div class="container">
+        <!-- Sign In Form -->
+        <div id="signInForm" class="form-container">
+            <h3 class="text-center mb-4">Sign In</h3>
+            <form id="signIn">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Sign In</button>
+                <p class="text-center mt-3">
+                    Don't have an account? <a href="#" onclick="toggleForms()">Sign Up</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- Sign Up Form -->
+        <div id="signUpForm" class="form-container" style="display: none;">
+            <h3 class="text-center mb-4">Sign Up</h3>
+            <form id="signUp">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" id="name" class="form-control" placeholder="Enter your name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="emailSignUp" class="form-label">Email</label>
+                    <input type="email" id="emailSignUp" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="passwordSignUp" class="form-label">Password</label>
+                    <input type="password" id="passwordSignUp" class="form-control" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                <p class="text-center mt-3">
+                    Already have an account? <a href="#" onclick="toggleForms()">Sign In</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Toggle between Sign In and Sign Up forms
+        function toggleForms() {
+            document.getElementById('signInForm').style.display =
+                document.getElementById('signInForm').style.display === 'none' ? 'block' : 'none';
+            document.getElementById('signUpForm').style.display =
+                document.getElementById('signUpForm').style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Sign In Form Submission
+        document.getElementById('signIn').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/signin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                if (response.ok) {
+                    alert('Login successful!');
+                    window.location.href = 'index.html'; // Redirect to home page
+                } else {
+                    const result = await response.json();
+                    alert(`Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Failed to connect to the server:', error);
+                alert('Failed to connect to the server.');
+            }
+        });
+
+        // Sign Up Form Submission
+        document.getElementById('signUp').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('emailSignUp').value;
+            const password = document.getElementById('passwordSignUp').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password }),
+                });
+
+                if (response.ok) {
+                    alert('Sign-up successful! Redirecting to login...');
+                    toggleForms(); // Switch to Sign In form
+                } else {
+                    const result = await response.json();
+                    alert(`Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Failed to connect to the server:', error);
+                alert('Failed to connect to the server.');
+            }
+        });
+    </script>
